@@ -20,8 +20,11 @@ QuizXpress using (ASP.NET)
 ## Daily Play Quiz 3 time per Day
 <img width="655" height="531" alt="Image" src="https://github.com/user-attachments/assets/fc61a5b0-8a89-4a5a-98cd-8246483ef9f0" />
 
+## Sorry page(If try more then 3 times a Day)
 <img width="910" height="786" alt="Image" src="https://github.com/user-attachments/assets/f6e06120-e6ad-4a68-b070-b4ef8855f083" />
 
+## Share Social Media your Score and Experience 
 <img width="490" height="195" alt="Image" src="https://github.com/user-attachments/assets/be6dbff5-cf07-4c4a-98fe-91b0dbc7ac89" />
 
+## Footer Section Dynamic
 <img width="1890" height="351" alt="Image" src="https://github.com/user-attachments/assets/41396dff-0fc5-403d-a084-28054b4ea816" />
