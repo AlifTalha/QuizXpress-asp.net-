@@ -1,0 +1,187 @@
+﻿/* Leaderboard Styles */
+.leaderboard-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.leaderboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+    .leaderboard-header h4 {
+        margin-bottom: 5px;
+    }
+
+.participants-count {
+    margin-top: 10px;
+}
+
+.leaderboard-content {
+    padding: 0;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.leaderboard-table {
+    margin-bottom: 0;
+}
+
+    .leaderboard-table thead {
+        background: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .leaderboard-table th {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #495057;
+        border-bottom: 2px solid #dee2e6;
+        padding: 15px 10px;
+    }
+
+    .leaderboard-table td {
+        vertical-align: middle;
+        padding: 12px 10px;
+        font-size: 0.9rem;
+    }
+
+    .leaderboard-table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+        transition: all 0.2s ease;
+    }
+
+.top-performer {
+    background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,255,255,1) 100%);
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+    .rank-badge.gold {
+        background: linear-gradient(135deg, #FFD700, #FFA500);
+        color: white;
+    }
+
+    .rank-badge.silver {
+        background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+        color: white;
+    }
+
+    .rank-badge.bronze {
+        background: linear-gradient(135deg, #CD7F32, #A0522D);
+        color: white;
+    }
+
+.rank-number {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.phone-number {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    color: #495057;
+}
+
+.score-badge {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.time-taken {
+    font-family: 'Courier New', monospace;
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.no-data {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+    .no-data i {
+        font-size: 3rem;
+        margin-bottom: 20px;
+    }
+
+.leaderboard-footer {
+    background: #f8f9fa;
+    padding: 10px 20px;
+    text-align: center;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Scrollbar Styling */
+.leaderboard-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.leaderboard-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.leaderboard-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+    .leaderboard-content::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+    }
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.leaderboard-container {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .leaderboard-table {
+        font-size: 0.8rem;
+    }
+
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 8px 6px;
+        }
+
+    .rank-badge {
+        font-size: 0.7rem;
+        padding: 2px 6px;
+    }
+
+    .phone-number {
+        font-size: 0.8rem;
+    }
+}
