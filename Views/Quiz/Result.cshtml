@@ -1,0 +1,221 @@
+﻿@model QuizBoard.Models.UserInfo
+@{
+    ViewData["Title"] = "Quiz Result";
+    var totalQuestions = 10; // You can pass this from controller if needed
+    var percentage = Model.Score.HasValue && totalQuestions > 0 ? (double)Model.Score.Value / totalQuestions * 100 : 0;
+}
+
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2><img src="https://cdn-icons-png.flaticon.com/512/2211/2211465.png" width="30" /> Quiz Completed!</h2>
+        <p class="text-muted">Congratulations, @Model.Name!</p>
+    </div>
+
+    <!-- Result Summary -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+            <h3 class="text-success mb-3">Your Final Score</h3>
+            <div class="display-4 text-primary mb-3">@(Model.Score ?? 0)/@totalQuestions</div>
+
+            <div class="row">
+                <div class="col-3">
+                    <div class="badge bg-success fs-6 px-3 py-2 w-100">
+                        <div>Score</div>
+                        <div class="fs-4">@(Model.Score ?? 0)</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="badge bg-info fs-6 px-3 py-2 w-100">
+                        <div>Percentage</div>
+                        <div class="fs-4">@Math.Round(percentage, 1)%</div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="badge bg-warning fs-6 px-3 py-2 w-100">
+                        <div>Time Taken</div>
+                        <div class="fs-4">
+                            @if (Model.TimeTaken.HasValue)
+                            {
+                                var minutes = Model.TimeTaken.Value / 60;
+                                var seconds = Model.TimeTaken.Value % 60;
+                                @($"{minutes:D2}:{seconds:D2}")
+                            }
+                            else
+                            {
+                                @("--:--")
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="badge bg-secondary fs-6 px-3 py-2 w-100">
+                        <div>Questions</div>
+                        <div class="fs-4">@totalQuestions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Message -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body text-center">
+            @{
+                string message = "";
+                string badgeClass = "";
+
+                if (percentage >= 80)
+                {
+                    message = "🎉 Excellent! Outstanding performance!";
+                    badgeClass = "bg-success";
+                }
+                else if (percentage >= 60)
+                {
+                    message = "👍 Good job! Well done!";
+                    badgeClass = "bg-primary";
+                }
+                else if (percentage >= 40)
+                {
+                    message = "👌 Not bad! Keep practicing!";
+                    badgeClass = "bg-warning text-dark";
+                }
+                else
+                {
+                    message = "💪 Need improvement! Try again!";
+                    badgeClass = "bg-danger";
+                }
+            }
+
+            <div class="badge @badgeClass fs-5 px-4 py-3">
+                @message
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Details -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-3">Quiz Details</h5>
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <div class="text-muted">Participant</div>
+                    <div class="fw-bold">@Model.Name</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted">Phone Number</div>
+                    <div class="fw-bold">@Model.PhoneNumber</div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted">Completed At</div>
+                    <div class="fw-bold">
+                        @if (Model.QuizCompletedDate.HasValue)
+                        {
+                            @Model.QuizCompletedDate.Value.ToString("dd MMM yyyy, hh:mm tt")
+                        }
+                        else
+                        {
+                            @("Not Available")
+                        }
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="text-muted">Duration</div>
+                    <div class="fw-bold">
+                        @if (Model.TimeTaken.HasValue)
+                        {
+                            var totalMinutes = Model.TimeTaken.Value / 60;
+                            var remainingSeconds = Model.TimeTaken.Value % 60;
+                            @($"{totalMinutes} min {remainingSeconds} sec")
+                        }
+                        else
+                        {
+                            @("Not Available")
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Analysis -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title text-center mb-3">Performance Analysis</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="progress mb-2" style="height: 25px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: @(percentage)%" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">
+                            @Math.Round(percentage, 1)%
+                        </div>
+                    </div>
+                    <small class="text-muted">Overall Score</small>
+                </div>
+                <div class="col-md-6">
+                    @if (Model.TimeTaken.HasValue)
+                    {
+                        var timePercentage = Math.Min((Model.TimeTaken.Value / (20.0 * 60)) * 100, 100);
+                        <div class="progress mb-2" style="height: 25px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: @(timePercentage)%" aria-valuenow="@timePercentage" aria-valuemin="0" aria-valuemax="100">
+                                @Math.Round(timePercentage, 1)%
+                            </div>
+                        </div>
+                        <small class="text-muted">Time Utilized (out of 20 minutes)</small>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="text-center">
+        <a href="@Url.Action("Index")" class="btn btn-primary btn-lg me-3">
+            <i class="bi bi-arrow-clockwise me-2"></i>Take Another Quiz
+        </a>
+        <button id="downloadResult" class="btn btn-outline-success bg-black btn-lg">
+            <i class="bi bi-download me-2"></i>Download Result
+        </button>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    document.getElementById('downloadResult').addEventListener('click', function () {
+        // Hide the download button temporarily
+        this.style.display = 'none';
+
+        // Create a container for the image
+        const resultContainer = document.querySelector('.container');
+
+        // Configure html2canvas options
+        const options = {
+            backgroundColor: '#f8f9fa',
+            scale: 2, // Higher quality
+            useCORS: true,
+            allowTaint: true,
+            width: resultContainer.offsetWidth,
+            height: resultContainer.offsetHeight
+        };
+
+        // Generate image and download
+        html2canvas(resultContainer, options).then(canvas => {
+            // Create download link
+            const link = document.createElement('a');
+            link.download = 'Quiz_Result_@(Model.Name.Replace(" ", "_"))_' + new Date().getTime() + '.png';
+            link.href = canvas.toDataURL('image/png');
+
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Show the button again
+            document.getElementById('downloadResult').style.display = 'inline-block';
+        }).catch(error => {
+            console.error('Error generating image:', error);
+            alert('Error generating image. Please try again.');
+
+            // Show the button again
+            document.getElementById('downloadResult').style.display = 'inline-block';
+        });
+    });
+</script>

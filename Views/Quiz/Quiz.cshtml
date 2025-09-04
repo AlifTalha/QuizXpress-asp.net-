@@ -1,0 +1,246 @@
+﻿@model dynamic
+@{
+    ViewData["Title"] = "Quiz Question";
+}
+
+<div class="quiz-container">
+    <!-- Timer Section -->
+    <div class="text-center mb-4">
+        <div class="timer-circle mx-auto">
+            <div id="timer" class="time">20:00</div>
+            <div class="label">remaining</div>
+        </div>
+        <div class="mt-2">
+            <small class="text-white fs-3">Time Taken: <span id="timeTaken">00:00</span></small>
+        </div>
+    </div>
+
+    <!-- Question Number -->
+    <div class="text-center mb-4">
+        <div class="question-number">
+            Question @Model.QuestionNumber/@Model.TotalQuestions
+        </div>
+    </div>
+
+    <!-- Question Card -->
+    <div class="card question-card mb-4">
+        <div class="question-header">
+            <h5 class="mb-0"><i class="bi bi-question-circle me-2"></i>Question @Model.QuestionNumber</h5>
+        </div>
+        <div class="card-body">
+            <div class="question-text text-center mb-4">
+                @Model.Question.QuestionText
+            </div>
+
+            <!-- Answer Options -->
+            <div class="d-grid gap-3">
+                <button class="answer-btn" data-answer="@Model.Question.Q1">
+                    <i class="bi bi-circle me-2"></i>@Model.Question.Q1
+                </button>
+                <button class="answer-btn" data-answer="@Model.Question.Q2">
+                    <i class="bi bi-circle me-2"></i>@Model.Question.Q2
+                </button>
+                <button class="answer-btn" data-answer="@Model.Question.Q3">
+                    <i class="bi bi-circle me-2"></i>@Model.Question.Q3
+                </button>
+                <button class="answer-btn" data-answer="@Model.Question.Q4">
+                    <i class="bi bi-circle me-2"></i>@Model.Question.Q4
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Score Section -->
+    <div class="score-badges">
+        <div class="score-badge success">
+            <i class="bi bi-trophy me-1"></i>Score @Model.Score
+        </div>
+        <div class="score-badge info">
+            <i class="bi bi-check-circle me-1"></i>Correct @Model.Correct
+        </div>
+        <div class="score-badge danger">
+            <i class="bi bi-x-circle me-1"></i>Wrong @Model.Wrong
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        let timeRemaining = @Model.TimeRemaining; // Time in seconds
+        let selectedAnswer = null;
+        let questionId = @Model.Question.Id;
+        let questionNumber = @Model.QuestionNumber;
+        let totalQuestions = @Model.TotalQuestions;
+        let score = @Model.Score;
+        let correct = @Model.Correct;
+        let wrong = @Model.Wrong;
+        let isSubmitting = false;
+
+        // Calculate actual time remaining based on start time
+        const startTime = new Date('@Model.StartTime.ToString("yyyy-MM-ddTHH:mm:ss")');
+        const now = new Date();
+        const elapsed = Math.floor((now - startTime) / 1000);
+        timeRemaining = Math.max(0, timeRemaining - elapsed);
+
+        // Timer functionality
+        function updateTimer() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent =
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
+            // Update time taken
+            const timeTaken = Math.floor((new Date() - startTime) / 1000);
+            const takenMinutes = Math.floor(timeTaken / 60);
+            const takenSeconds = timeTaken % 60;
+            document.getElementById('timeTaken').textContent =
+                String(takenMinutes).padStart(2, '0') + ':' + String(takenSeconds).padStart(2, '0');
+
+            if (timeRemaining <= 0) {
+                // Time's up - auto submit and redirect
+                handleTimeUp();
+                return;
+            }
+
+            timeRemaining--;
+            setTimeout(updateTimer, 1000);
+        }
+
+        // Handle time up
+        function handleTimeUp() {
+            axios.post('/Quiz/TimeUp')
+                .then(res => {
+                    if (res.data.success) {
+                        alert(res.data.message);
+                        window.location.href = res.data.redirectUrl;
+                    }
+                })
+                .catch(() => {
+                    alert('Time is up! Redirecting to results...');
+                    window.location.href = '/Quiz/Result';
+                });
+        }
+
+        // Start timer
+        updateTimer();
+
+        // Answer selection
+        document.querySelectorAll('.answer-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (isSubmitting) return; // Prevent multiple submissions
+
+                // Remove previous selection
+                document.querySelectorAll('.answer-btn').forEach(b => {
+                    b.classList.remove('selected');
+                    b.querySelector('i').className = 'bi bi-circle me-2';
+                });
+
+                // Highlight selected answer
+                this.classList.add('selected');
+                this.querySelector('i').className = 'bi bi-check-circle-fill me-2';
+
+                selectedAnswer = this.getAttribute('data-answer');
+
+                // Submit answer immediately
+                setTimeout(() => {
+                    submitAnswer();
+                }, 800);
+            });
+        });
+
+        function submitAnswer() {
+            if (isSubmitting) return;
+            isSubmitting = true;
+
+            if (!selectedAnswer) {
+                selectedAnswer = '';
+            }
+
+            // Disable all buttons
+            document.querySelectorAll('.answer-btn').forEach(btn => {
+                btn.disabled = true;
+            });
+
+            const data = {
+                questionId: questionId,
+                selectedAnswer: selectedAnswer
+            };
+
+            axios.post('/Quiz/SubmitAnswer', data)
+                .then(res => {
+                    if (res.data.success) {
+                        if (res.data.isCompleted) {
+                            // Quiz completed - redirect to results
+                            setTimeout(() => {
+                                window.location.href = res.data.redirectUrl;
+                            }, 1000);
+                        } else {
+                            // Load next question without page refresh
+                            loadNextQuestion(res.data);
+                        }
+                    } else {
+                        alert(res.data.message);
+                        isSubmitting = false;
+                    }
+                })
+                .catch(() => {
+                    alert('Error submitting answer.');
+                    isSubmitting = false;
+                });
+        }
+
+        function loadNextQuestion(data) {
+            // Update question data
+            questionId = data.nextQuestion.id;
+            questionNumber = data.questionNumber;
+            score = data.score;
+            correct = data.correct;
+            wrong = data.wrong;
+            selectedAnswer = null;
+            isSubmitting = false;
+
+            // Update UI elements
+            document.querySelector('.question-number').textContent = `Question ${questionNumber}/${totalQuestions}`;
+            document.querySelector('.question-text').textContent = data.nextQuestion.questionText;
+            document.querySelector('.question-header h5').innerHTML = `<i class="bi bi-question-circle me-2"></i>Question ${questionNumber}`;
+
+            // Update answer buttons
+            const answerBtns = document.querySelectorAll('.answer-btn');
+            answerBtns[0].setAttribute('data-answer', data.nextQuestion.q1);
+            answerBtns[0].innerHTML = `<i class="bi bi-circle me-2"></i>${data.nextQuestion.q1}`;
+
+            answerBtns[1].setAttribute('data-answer', data.nextQuestion.q2);
+            answerBtns[1].innerHTML = `<i class="bi bi-circle me-2"></i>${data.nextQuestion.q2}`;
+
+            answerBtns[2].setAttribute('data-answer', data.nextQuestion.q3);
+            answerBtns[2].innerHTML = `<i class="bi bi-circle me-2"></i>${data.nextQuestion.q3}`;
+
+            answerBtns[3].setAttribute('data-answer', data.nextQuestion.q4);
+            answerBtns[3].innerHTML = `<i class="bi bi-circle me-2"></i>${data.nextQuestion.q4}`;
+
+            // Reset button states
+            answerBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('selected');
+                btn.querySelector('i').className = 'bi bi-circle me-2';
+            });
+
+            // Update score badges
+            document.querySelector('.score-badge.success').innerHTML = `<i class="bi bi-trophy me-1"></i>Score ${score}`;
+            document.querySelector('.score-badge.info').innerHTML = `<i class="bi bi-check-circle me-1"></i>Correct ${correct}`;
+            document.querySelector('.score-badge.danger').innerHTML = `<i class="bi bi-x-circle me-1"></i>Wrong ${wrong}`;
+
+            // Add slide animation
+            document.querySelector('.question-card').style.animation = 'slideInUp 0.5s ease-out';
+        }
+
+        // Prevent accidental page refresh during quiz
+        window.addEventListener('beforeunload', function (e) {
+            if (!isSubmitting) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+}

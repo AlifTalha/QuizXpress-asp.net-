@@ -1,0 +1,506 @@
+﻿@{
+    ViewData["Title"] = "QuizBoard";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Start Quiz Section (Left Side) -->
+        <div class="col-lg-6 col-md-12">
+            <div class="quiz-start-section align-items-center">
+                <div class="text-center mt-5">
+                    <div class="quiz-welcome-card">
+                        <div class="card-body text-center py-5">
+                            <h1 class="display-4 mb-4">
+                                <i class="bi bi-puzzle text-primary me-3"></i>কুইজ খেলুন
+                            </h1>
+                            <p class="lead  mb-4 text-white">Test your knowledge with our interactive quiz!</p>
+                            <button class="btn btn-primary btn-lg px-5 py-3" data-bs-toggle="modal" data-bs-target="#quizModal">
+                                <i class="bi bi-play-fill me-2"></i>Start Quiz
+                            </button>
+                            <div class="mt-4">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1 text-white">20 minutes </i>
+                                    <i class="bi bi-question-circle me-1 text-white">10 questions</i>
+                                </small>
+                            </div>
+                            <!-- Daily Limit Info -->
+                            <div class="mt-3">
+                                <small class="text-warning">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Daily Limit: 3 attempts per phone number
+                                </small>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Section (Below Quiz Section) -->
+            <div class="game-section mt-4">
+                <div class="text-center">
+                    <div class="game-welcome-card">
+                        <div class="card-body text-center py-4">
+                            <h2 class="h3 mb-3">
+                                <i class="bi bi-controller text-black me-3">Basketball Game</i>
+                            </h2>
+                            <p class="mb-3 text-black">Play our exciting basketball game!</p>
+                            <button class="btn btn-success btn-lg px-4 py-2" id="gameStartBtn">
+                                <i class="bi bi-play-circle-fill me-2"></i>Game Start
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section (Right Side) -->
+        <div class="col-lg-6 col-md-12">
+            <div class="leaderboard-section mt-5">
+                <div id="leaderboardContainer">
+                    <!-- Leaderboard will be loaded here -->
+                    <div class="loading-spinner text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2 text-muted">Loading leaderboard...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Free Games Section (Below Leaderboard) -->
+            <div class="free-games-section mt-4">
+                <div class="row">
+                    <!-- Free Game 1 -->
+                    <div class="col-6">
+                        <div class="free-game-card">
+                            <div class="card-body text-center py-4">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-joystick text-white me-2 fs-4">Free Game 1</i>
+                                </h5>
+                                <p class="small mb-3 text-white">Play amazing games from Poki (Opens in new tab)</p>
+                                <button class="btn btn-success btn-sm px-3 py-2" id="freeGame1Btn">
+                                    <i class="bi bi-play-circle me-1"></i>Play
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Free Game 2 -->
+                    <div class="col-6">
+                        <div class="free-game-card">
+                            <div class="card-body text-center py-4">
+                                <h5 class="mb-3">
+                                    <i class="bi bi-car-front text-white me-2 fs-4">Free Game 2</i>
+                                </h5>
+                                <p class="small mb-3 text-white">Play car games from CrazyGames (Opens in new tab)</p>
+                                <button class="btn btn-info btn-sm px-3 py-2" id="freeGame2Btn">
+                                    <i class="bi bi-play-circle me-1"></i>Play
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Display Section (Below Free Games) -->
+            <div class="game-display-section mt-4" id="gameContainer" style="display: none;">
+                <div class="game-frame-container">
+                    <div class="game-header d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0" id="gameTitle">
+                            <i class="bi bi-controller text-warning me-2"></i>Basketball Game
+                        </h4>
+                        <button class="btn btn-outline-secondary btn-sm" id="backToMainBtn">
+                            <i class="bi bi-arrow-left me-1"></i>Back to Main
+                        </button>
+                    </div>
+                    <div class="game-frame">
+                        <iframe id="gameIframe" src="" width="100%" height="500" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quiz Modal -->
+<div class="modal fade" id="quizModal" tabindex="-1" aria-labelledby="quizModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="quizForm">
+                <div class="modal-header">
+                    <h5 class="modal-title " id="quizModalLabel">
+                        <i class="bi bi-person-plus me-2 "></i>Enter Your Information
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-person me-2 "></i>আপনার নাম : 
+                        </label>
+                        <input type="text" name="Name" class="form-control" placeholder="Enter your full name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="bi bi-telephone me-2"></i>আপনার মোবাইল নম্বর :
+                        </label>
+                        <input type="text" name="PhoneNumber" class="form-control" placeholder="Enter your phone number" required />
+                    </div>
+                    <!-- Daily Limit Warning -->
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <small>
+                            <strong>Note:</strong> You can play maximum 3 times per day with the same phone number.
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success ms-3">
+                        <i class="bi bi-check-circle me-2"></i>Start Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Daily Limit Exceeded Modal -->
+<div class="modal fade" id="limitExceededModal" tabindex="-1" aria-labelledby="limitExceededModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="limitExceededModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Daily Limit Exceeded
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <i class="bi bi-clock-history text-warning" style="font-size: 3rem;"></i>
+                </div>
+                <h6 class="mb-3">You have already played 3 times today!</h6>
+                <p class="text-muted mb-3">
+                    Each phone number can only play 3 times per day. 
+                    Please try again tomorrow for more quiz opportunities.
+                </p>
+                <div class="alert alert-light">
+                    <small>
+                        <strong>Tip:</strong> Share with friends and challenge them to beat your score!
+                    </small>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="goToSorryPage()">
+                    <i class="bi bi-arrow-right me-1"></i>Continue
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        // Quiz form submission
+        document.getElementById("quizForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Checking...';
+            submitBtn.disabled = true;
+
+            axios.post('/Quiz/SaveUser', data)
+                .then(res => {
+                    if (res.data.success) {
+                        window.location.href = res.data.redirectUrl;
+                    } else if (res.data.limitExceeded) {
+                        // Hide the quiz modal
+                        const quizModal = bootstrap.Modal.getInstance(document.getElementById('quizModal'));
+                        quizModal.hide();
+                        
+                        // Show limit exceeded modal
+                        const limitModal = new bootstrap.Modal(document.getElementById('limitExceededModal'));
+                        limitModal.show();
+                        
+                        // Reset form
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    } else {
+                        alert(res.data.message || 'Failed to save user information');
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    alert('Error submitting form.');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+        });
+
+        // Game functionality
+        document.getElementById("gameStartBtn").addEventListener("click", function() {
+            showGame("/game/Basketball2/index.html", "Basketball Game", "controller");
+        });
+
+        // Free Game 1 functionality (Poki Games)
+        document.getElementById("freeGame1Btn").addEventListener("click", function() {
+            // Open Poki games in a new tab
+            window.open("https://poki.com/", "_blank", "noopener,noreferrer");
+        });
+
+        // Function to go to sorry page
+        function goToSorryPage() {
+            window.location.href = '/Quiz/Sorry';
+        }
+
+        // Free Game 2 functionality (CrazyGames Car Games)
+        document.getElementById("freeGame2Btn").addEventListener("click", function() {
+            // Open CrazyGames car games in a new tab
+            window.open("https://www.crazygames.com/t/car", "_blank", "noopener,noreferrer");
+        });
+
+        // Function to show game (only for local games that can be embedded)
+        function showGame(gameUrl, gameTitle, iconClass) {
+            const gameContainer = document.getElementById("gameContainer");
+            const gameIframe = document.getElementById("gameIframe");
+            const leaderboardSection = document.querySelector(".leaderboard-section");
+            const freeGamesSection = document.querySelector(".free-games-section");
+            const gameTitleElement = document.getElementById("gameTitle");
+            
+            // Hide leaderboard and free games sections
+            leaderboardSection.style.display = "none";
+            freeGamesSection.style.display = "none";
+            
+            // Show game container
+            gameContainer.style.display = "block";
+            
+            // Update game title and icon
+            gameTitleElement.innerHTML = `<i class="bi bi-${iconClass} text-warning me-2"></i>${gameTitle}`;
+            
+            // Load the game
+            gameIframe.src = gameUrl;
+        }
+
+        // Back to main functionality
+        document.getElementById("backToMainBtn").addEventListener("click", function() {
+            const gameContainer = document.getElementById("gameContainer");
+            const gameIframe = document.getElementById("gameIframe");
+            const leaderboardSection = document.querySelector(".leaderboard-section");
+            const freeGamesSection = document.querySelector(".free-games-section");
+            
+            // Hide game and show leaderboard and free games
+            gameContainer.style.display = "none";
+            leaderboardSection.style.display = "block";
+            freeGamesSection.style.display = "block";
+            
+            // Clear the iframe src to stop the game
+            gameIframe.src = "";
+        });
+
+        // Load leaderboard
+        function loadLeaderboard() {
+            axios.get('/Leaderboard/GetTodaysLeaderboard')
+                .then(response => {
+                    document.getElementById('leaderboardContainer').innerHTML = response.data;
+                })
+                .catch(error => {
+                    console.error('Error loading leaderboard:', error);
+                    document.getElementById('leaderboardContainer').innerHTML = `
+                        <div class="leaderboard-container">
+                            <div class="leaderboard-header">
+                                <h4 class="mb-0">
+                                    <i class="bi bi-trophy-fill text-warning me-2"></i>
+                                    Today's Leaderboard
+                                </h4>
+                                <small class="text-light">${new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}</small>
+                                <div class="participants-count mt-2">
+                                    <small class="badge bg-light text-dark">0 Participants</small>
+                                </div>
+                            </div>
+                            <div class="leaderboard-content">
+                                <div class="no-data text-center py-5">
+                                    <i class="bi bi-info-circle text-muted mb-3" style="font-size: 3rem;"></i>
+                                    <p class="text-muted mb-2">No quiz results today yet!</p>
+                                    <small class="text-muted">Be the first to take the quiz and claim the top spot!</small>
+                                </div>
+                            </div>
+                            <div class="leaderboard-footer">
+                                <small class="text-muted">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>
+                                    Updates automatically every 30 seconds
+                                </small>
+                            </div>
+                        </div>
+                        <style>
+                        .leaderboard-container {
+                            background: white;
+                            border-radius: 15px;
+                            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                            overflow: hidden;
+                            border: 1px solid #e9ecef;
+                        }
+                        .leaderboard-header {
+                            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                            color: white;
+                            padding: 20px;
+                            text-align: center;
+                        }
+                        .leaderboard-content {
+                            max-height: 400px;
+                            overflow-y: auto;
+
+                        }
+                        .leaderboard-footer {
+                            background: #f8f9fa;
+                            padding: 10px 20px;
+                            text-align: center;
+                            border-top: 1px solid #dee2e6;
+                        }
+                        </style>
+                    `;
+                });
+        }
+
+        // Load leaderboard on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadLeaderboard();
+            
+            // Auto-refresh leaderboard every 30 seconds
+            setInterval(loadLeaderboard, 30000);
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .quiz-welcome-card {
+            background: linear-gradient(135deg, #3f4566 30%, #292f52 70%);
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .quiz-welcome-card .card-body {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+
+        /* Free Games Section Styles */
+        .free-games-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .free-game-card {
+            background: #7dbab2;
+            background: linear-gradient(90deg, rgba(125, 186, 178, 1) 20%, rgba(45, 71, 186, 1) 100%, rgba(253, 29, 29, 1) 81%, rgba(131, 58, 180, 1) 93%, rgba(252, 176, 69, 1) 100%);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%;
+            border: 1px solid #e9ecef;
+        }
+
+        .free-game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .free-game-card .card-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 140px;
+        }
+
+        .free-game-card h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .free-game-card p {
+            font-size: 0.85rem;
+            line-height: 1.3;
+            margin: 0.5rem 0;
+        }
+
+        .free-game-card .btn {
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .free-game-card .btn:hover {
+            transform: scale(1.05);
+        }
+        .game-welcome-card {
+            background: linear-gradient(to bottom, #33ccff 0%, #ff99cc 100%);
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 154, 86, 0.3);
+        }
+
+        .game-welcome-card .card-body {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+
+        .game-display-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .game-frame-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .game-frame {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
+        .game-header {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 15px;
+        }
+
+        .leaderboard-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .loading-spinner {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+     
+    </style>
+}

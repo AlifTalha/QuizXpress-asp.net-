@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Instructions</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
+        }
+        
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 8px solid #333;
+            position: relative;
+            transition: transform 3s cubic-bezier(0.23, 1, 0.320, 1);
+            background: conic-gradient(
+                from 0deg,
+                #ff6b6b 0deg 45deg,
+                #4ecdc4 45deg 90deg,
+                #45b7d1 90deg 135deg,
+                #f9ca24 135deg 180deg,
+                #f0932b 180deg 225deg,
+                #eb4d4b 225deg 270deg,
+                #6c5ce7 270deg 315deg,
+                #2d3436 315deg 360deg
+            );
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-bottom: 30px solid #333;
+            z-index: 10;
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #333;
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .segment-labels {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .segment-label {
+            position: absolute;
+            transform-origin: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            white-space: nowrap;
+        }
+        
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 400px;
+            margin: 20px;
+        }
+        
+        .reward { color: #28a745; }
+        .challenge { color: #dc3545; }
+        .benefit { color: #007bff; }
+        
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .floating-animation {
+            animation: float 2s ease-in-out infinite;
+        }
+        
+     
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h2><img src="https://cdn-icons-png.flaticon.com/512/2211/2211465.png" width="30" /> Quiz</h2>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-muted">Total Mark</div>
+                    <div class="fs-4 text-success">10</div>
+                </div>
+                <div class="text-end">
+                    <div class="text-muted">Duration</div>
+                    <div class="badge bg-light text-dark fs-5"><i class="bi bi-clock"></i> 20 min</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Spin the Wheel Section -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-body text-center">
+                <h5 class="mb-3">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2972/2972531.png" width="30" />
+                    Spin the Wheel of Fortune!
+                </h5>
+                <p class="text-muted mb-4">Spin before you start the quiz for a chance to win rewards, face challenges, or get quiz benefits!</p>
+                
+                <div class="wheel-container mb-4">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel" id="wheel">
+                        <div class="segment-labels">
+                            <div class="segment-label" style="top: 15%; left: 70%; transform: rotate(22.5deg);">+2 Bonus</div>
+                            <div class="segment-label" style="top: 30%; right: 15%; transform: rotate(67.5deg);">Skip Hard Q</div>
+                            <div class="segment-label" style="bottom: 30%; right: 15%; transform: rotate(112.5deg);">Extra Time</div>
+                            <div class="segment-label" style="bottom: 15%; left: 70%; transform: rotate(157.5deg);">Hint Card</div>
+                            <div class="segment-label" style="bottom: 15%; right: 70%; transform: rotate(202.5deg);">-1 Life</div>
+                            <div class="segment-label" style="bottom: 30%; left: 15%; transform: rotate(247.5deg);">Hard Mode</div>
+                            <div class="segment-label" style="top: 30%; left: 15%; transform: rotate(292.5deg);">Double Score</div>
+                            <div class="segment-label" style="top: 15%; right: 70%; transform: rotate(337.5deg);">Lucky Star</div>
+                        </div>
+                    </div>
+                    <div class="wheel-center">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                </div>
+                
+                <button id="spinBtn" class="btn btn-warning btn-lg floating-animation">
+                    <i class="bi bi-arrow-clockwise"></i> SPIN THE WHEEL
+                </button>
+                <p class="small text-muted mt-2">You can spin once before starting the quiz!</p>
+            </div>
+        </div>
+
+        <div class="card p-4">
+            <h5 class="text-center mb-3">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828884.png" width="35" /> গাইডলাইনঃ
+            </h5>
+            <ul class="list-unstyled lh-lg">
+                <li>১। কুইজের সময় ২০ মিনিট। আপনি একবার কুইজে অংশগ্রহণ করলে ২০ মিনিটের মধ্যেই কুইজটি শেষ করতে হবে।</li>
+                <li>২। কুইজ দেয়া যাবে ১ বার। ১ বারের বেশি কুইজে অংশগ্রহণ করা যাবে না।</li>
+                <li>৩। নিশ্চিত হয়ে নিন, আপনার উত্তরগুলো সাবমিট হয়েছে কিনা।</li>
+                <li>৪। সকল প্রশ্ন কোয়েশনের উত্তর হবে MCQ। কেবলমাত্র ১টি অপশনই সঠিক হবে।</li>
+                <li>৫। কুইজটি একবার শুরু করলে অবশ্যই সাবমিট করতে হবে, কেটে দেয়া যাবে না।</li>
+            </ul>
+            <div class="text-center mt-3">
+                <button id="startQuizBtn" class="btn btn-primary btn-lg">START QUIZ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="result-modal" id="resultModal">
+        <div class="result-content">
+            <div id="resultIcon" class="mb-3" style="font-size: 3rem;"></div>
+            <h4 id="resultTitle" class="mb-3"></h4>
+            <p id="resultDescription" class="mb-4"></p>
+            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const wheel = document.getElementById('wheel');
+        const spinBtn = document.getElementById('spinBtn');
+        const resultModal = document.getElementById('resultModal');
+        const resultIcon = document.getElementById('resultIcon');
+        const resultTitle = document.getElementById('resultTitle');
+        const resultDescription = document.getElementById('resultDescription');
+        
+        let hasSpun = false;
+        let spinResult = null;
+        
+        const segments = [
+            {
+                name: "+2 Bonus Points",
+                type: "reward",
+                icon: "🎁",
+                description: "আপনি ২ বোনাস পয়েন্ট পেয়েছেন! কুইজে আপনার স্কোরে ২ পয়েন্ট যোগ হবে।",
+                color: "#28a745"
+            },
+            {
+                name: "Skip Hard Question",
+                type: "benefit",
+                icon: "⏭️",
+                description: "আপনি একটি কঠিন প্রশ্ন এড়িয়ে যেতে পারবেন! যেকোনো প্রশ্নে 'Skip' অপশন ব্যবহার করুন।",
+                color: "#007bff"
+            },
+            {
+                name: "Extra Time +5min",
+                type: "benefit",
+                icon: "⏰",
+                description: "বোনাস সময়! আপনার কুইজের সময় ৫ মিনিট বেড়ে গেছে। এখন আপনার কাছে ২৫ মিনিট সময় আছে।",
+                color: "#007bff"
+            },
+            {
+                name: "Hint Card",
+                type: "benefit",
+                icon: "💡",
+                description: "আপনি একটি হিন্ট কার্ড পেয়েছেন! যেকোনো প্রশ্নে হিন্ট চাইতে পারেন।",
+                color: "#007bff"
+            },
+            {
+                name: "Lose 1 Life",
+                type: "challenge",
+                icon: "💔",
+                description: "দুর্ভাগ্য! আপনি একটি ভুল উত্তরের জন্য অতিরিক্ত পেনাল্টি পাবেন।",
+                color: "#dc3545"
+            },
+            {
+                name: "Hard Mode",
+                type: "challenge",
+                icon: "🔥",
+                description: "চ্যালেঞ্জ মোড সক্রিয়! কুইজে কঠিন প্রশ্ন বেশি আসবে, কিন্তু বেশি পয়েন্টও পাবেন।",
+                color: "#dc3545"
+            },
+            {
+                name: "Double Score",
+                type: "reward",
+                icon: "⭐",
+                description: "অসাধারণ! আপনার কুইজের স্কোর দ্বিগুণ হবে। এই সুযোগ হাতছাড়া করবেন না!",
+                color: "#28a745"
+            },
+            {
+                name: "Lucky Star",
+                type: "reward",
+                icon: "🌟",
+                description: "ভাগ্যবান! আপনি একটি বিশেষ পুরস্কার পেয়েছেন - সব প্রশ্নে ৫০/৫০ সাহায্য পাবেন।",
+                color: "#28a745"
+            }
+        ];
+        
+        spinBtn.addEventListener('click', function() {
+            if (hasSpun) return;
+            
+            hasSpun = true;
+            spinBtn.disabled = true;
+            spinBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Spinning...';
+            
+            // Generate random rotation (multiple full rotations + random segment)
+            const randomRotation = Math.floor(Math.random() * 360);
+            const fullRotations = 1440; // 4 full rotations for dramatic effect
+            const finalRotation = fullRotations + randomRotation;
+            
+            wheel.style.transform = `rotate(${finalRotation}deg)`;
+            
+            // Determine which segment was landed on
+            const segmentIndex = Math.floor(((360 - (randomRotation % 360)) / 45)) % 8;
+            spinResult = segments[segmentIndex];
+            
+            // Show result after animation completes
+            setTimeout(() => {
+                showResult(spinResult);
+                spinBtn.innerHTML = '<i class="bi bi-check-circle"></i> Spun!';
+                spinBtn.classList.remove('floating-animation');
+            }, 3000);
+        });
+        
+        function showResult(result) {
+            resultIcon.textContent = result.icon;
+            resultTitle.textContent = result.name;
+            resultTitle.className = result.type;
+            resultDescription.textContent = result.description;
+            resultModal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            resultModal.style.display = 'none';
+        }
+        
+        // Start Quiz functionality
+        document.getElementById("startQuizBtn").addEventListener("click", function () {
+            // Include spin result in the quiz start request
+            const quizData = {
+                spinResult: spinResult
+            };
+            
+            axios.post('/Quiz/StartQuiz', quizData)
+                .then(res => {
+                    if (res.data.success) {
+                        window.location.href = res.data.redirectUrl;
+                    } else {
+                        alert(res.data.message);
+                    }
+                })
+                .catch(() => alert('Error starting quiz.'));
+        });
+        
+        // Close modal when clicking outside
+        resultModal.addEventListener('click', function(e) {
+            if (e.target === resultModal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

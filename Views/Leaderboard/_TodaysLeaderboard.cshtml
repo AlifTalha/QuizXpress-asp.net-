@@ -1,0 +1,249 @@
+﻿@model QuizBoard.Models.TodaysLeaderboardResponse
+
+<div class="leaderboard-container">
+    <div class="leaderboard-header">
+        <h4 class="mb-0">
+            <i class="bi bi-trophy-fill text-warning me-2"></i>
+            Today's Leaderboard
+        </h4>
+        <small class="text-light">@Model.Date.ToString("MMM dd, yyyy")</small>
+        <div class="participants-count mt-2">
+            <small class="badge bg-light text-dark">@Model.TotalParticipants Participants</small>
+        </div>
+    </div>
+
+    <div class="leaderboard-content">
+        @if (Model.Leaderboard != null && Model.Leaderboard.Any())
+        {
+            <div class="table-wrapper">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th width="20%">Rank</th>
+                            <th width="35%">Phone</th>
+                            <th width="20%">Score</th>
+                            <th width="25%">Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Leaderboard.Take(10))
+                        {
+                            <tr class="@(item.Rank <= 3 ? "top-performer" : "")">
+                                <td>
+                                    @if (item.Rank == 1)
+                                    {
+                                        <span class="rank-badge gold">
+                                            <i class="bi bi-trophy-fill"></i> 1st
+                                        </span>
+                                    }
+                                    else if (item.Rank == 2)
+                                    {
+                                        <span class="rank-badge silver">
+                                            <i class="bi bi-award-fill"></i> 2nd
+                                        </span>
+                                    }
+                                    else if (item.Rank == 3)
+                                    {
+                                        <span class="rank-badge bronze">
+                                            <i class="bi bi-award"></i> 3rd
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="rank-number">#@item.Rank</span>
+                                    }
+                                </td>
+                                <td class="phone-number">
+                                    @if (item.PhoneNumber.Length > 6)
+                                    {
+                                        @(item.PhoneNumber.Substring(0, 3) + "****" + item.PhoneNumber.Substring(item.PhoneNumber.Length - 3))
+                                    }
+                                    else
+                                    {
+                                        @item.PhoneNumber
+                                    }
+                                </td>
+                                <td>
+                                    <span class="score-badge">@item.Score/10</span>
+                                </td>
+                                <td class="time-taken">
+                                    <i class="bi bi-clock me-1"></i>@item.TimeTakenFormatted
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="no-data text-center py-5">
+                <i class="bi bi-info-circle text-muted mb-3" style="font-size: 3rem;"></i>
+                <p class="text-muted mb-2">No quiz results today yet!</p>
+                <small class="text-muted">Be the first to take the quiz and claim the top spot!</small>
+            </div>
+        }
+    </div>
+
+    @* <div class="leaderboard-footer">
+        <small class="text-muted">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            Updates automatically
+        </small>
+    </div> *@
+</div>
+
+<style>
+    /* Leaderboard Styles */
+    .leaderboard-container {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .leaderboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .leaderboard-content {
+        height: 250px; /* Fixed height for scrolling */
+        overflow: hidden;
+        position: relative;
+    }
+
+    .table-wrapper {
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    .leaderboard-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .leaderboard-table thead th {
+            position: sticky;
+            top: 0;
+            background: #f8f9fa;
+            z-index: 10;
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .leaderboard-table tbody {
+            display: block;
+            overflow-y: auto;
+        }
+
+        .leaderboard-table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .leaderboard-table td {
+            vertical-align: middle;
+            padding: 12px 10px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .leaderboard-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+    .top-performer {
+        background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,255,255,1) 100%);
+    }
+
+    .rank-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        border-radius: 15px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        gap: 4px;
+    }
+
+        .rank-badge.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+        }
+
+        .rank-badge.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+            color: white;
+        }
+
+        .rank-badge.bronze {
+            background: linear-gradient(135deg, #CD7F32, #A0522D);
+            color: white;
+        }
+
+    .rank-number {
+        font-weight: 600;
+        color: #6c757d;
+        font-size: 1rem;
+    }
+
+    .phone-number {
+        font-family: 'Courier New', monospace;
+        font-weight: 500;
+        color: #495057;
+        font-size: 0.85rem;
+    }
+
+    .score-badge {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+    }
+
+    .time-taken {
+        font-family: 'Courier New', monospace;
+        font-weight: 500;
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+
+   /*  .leaderboard-footer {
+        background: #f8f9fa;
+        padding: 10px 20px;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+    } */
+
+    /* Scrollbar styling */
+    .table-wrapper::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .table-wrapper::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    .table-wrapper::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+    }
+
+    .no-data {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
