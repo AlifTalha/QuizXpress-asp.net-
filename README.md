@@ -7,15 +7,17 @@ QuizXpress using (ASP.NET)
 ## Name and Number Entry Before Start Quiz
 <img width="1887" height="911" alt="Image" src="https://github.com/user-attachments/assets/5ff6c3b9-8722-4e63-966e-c1804c3d16e0" />
 
-##Quiz Interface
+## Quiz Interface
 <img width="364" height="913" alt="Image" src="https://github.com/user-attachments/assets/badb2c81-1115-4497-9a3c-62300ed5a138" />
 
 
 ## Result Section
 <img width="1656" height="908" alt="Image" src="https://github.com/user-attachments/assets/44885ce6-94c2-4362-8e54-3e835f7f5c41" />
 
+## Basketball Game Play
 <img width="1830" height="652" alt="Image" src="https://github.com/user-attachments/assets/94c4e6a4-5003-4303-98a5-57490369b7ba" />
 
+## Daily Play Quiz 3 time per Day
 <img width="655" height="531" alt="Image" src="https://github.com/user-attachments/assets/fc61a5b0-8a89-4a5a-98cd-8246483ef9f0" />
 
 <img width="910" height="786" alt="Image" src="https://github.com/user-attachments/assets/f6e06120-e6ad-4a68-b070-b4ef8855f083" />
