@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using QuizBoard.Models;
 using System.Diagnostics;
-
+//file
 namespace QuizBoard.Controllers
 {
     public class HomeController : Controller
@@ -30,3 +30,4 @@ namespace QuizBoard.Controllers
         }
     }
 }
+
